@@ -1,24 +1,51 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import TrafficMeter from "./pages/TrafficMeter";
+import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
+import AboutPage from "./pages/AboutPage";
+import TrafficLightsPage from "./pages/TrafficLightsPage";
+import { BottomNavigation, BottomNavigationAction } from "@mui/material";
+import { Home, Traffic, Info } from '@mui/icons-material';
+import TrafficLightsMetricsPage from "./pages/TrafficLightsMetricsPage";
+
 
 function App() {
+  const navigate = useNavigate();
+
+  const [value, setValue] = React.useState()
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
+      <main className='main_container'>
+        <Routes>
+          <Route path="/" element={<TrafficLightsPage />} />
+          <Route path="traffic-meter" element={<TrafficMeter />} />
+          <Route path="traffic-meter/:lightId" element={<TrafficMeter />} />
+          <Route path="measurements" element={<TrafficLightsMetricsPage />} />
+          <Route path="about" element={<AboutPage />} />
+        </Routes>
+
+        <BottomNavigation
+          showLabels
+          value={value}
+          onChange={(event, newValue) => {
+            setValue(newValue);
+          }}
+          sx={{
+            width: 530,
+            pl: 2,
+            pb: 2,
+            pr: 2
+          }}
+        >
+          <BottomNavigationAction label="Home" icon={<Home />} onClick={() => navigate('/')} />
+          <BottomNavigationAction label="Measurements" icon={<Traffic />} onClick={() => navigate('measurements')} />
+          <BottomNavigationAction label="Traffic meter" icon={<Traffic />} onClick={() => navigate('traffic-meter')} />
+          <BottomNavigationAction label="About" icon={<Info />} onClick={() => navigate('about')} />
+        </BottomNavigation>
+      </main>
     </div>
   );
 }
