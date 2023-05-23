@@ -35,8 +35,12 @@ function App() {
           }}
           sx={{
             width: {
-              xs: '100%',
+              xs: 1,
               sm: 530
+            },
+            height: {
+              xs: '10vh',
+              sm: '7vh'
             },
             pl: 2,
             pr: 2
