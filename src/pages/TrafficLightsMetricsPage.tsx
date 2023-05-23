@@ -78,7 +78,7 @@ const TrafficLightsMetricsPage = () => {
         sm: 500
       },
       height: {
-        xs: '90svh',
+        xs: '90vh',
         sm: 450
       },
       boxShadow: 0,
