@@ -106,7 +106,7 @@ const TrafficLightsPage = () => {
         sm: 500
       },
       height: {
-        xs: '90vh',
+        xs: '90%',
         sm: 450
       },
       boxShadow: 0,
