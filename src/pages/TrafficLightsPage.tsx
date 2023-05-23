@@ -1,6 +1,6 @@
 import { Box, Card, styled, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
-import { ELightColors, Metric } from "../types";
+import { ELightColors, Light, Metric } from "../types";
 import { TrafficLightsContext } from "../state/TrafficLightsContext";
 import LightsList from "../components/LightsList";
 import TrafficLight from "../components/TrafficLight";
@@ -27,7 +27,8 @@ const TrafficLightsPage = () => {
   const {state} = useContext(TrafficLightsContext);
 
   const [currentLightId, setCurrentLightId] = useState<string | null>(null);
-  const [currentLightColor, setCurrentLightColor] = useState<ELightColors>(ELightColors.RED);
+  const [currentLight, setCurrentLight] = useState<Light | null>(null);
+  const [currentLightColor, setCurrentLightColor] = useState<ELightColors>(ELightColors.RED); // Текущий цвет
 
   const [currentIntervalId, setCurrentIntervalId] = useState<number>(0);
 
@@ -46,7 +47,6 @@ const TrafficLightsPage = () => {
     console.log('checkLightState');
     const currentTime = new Date();
     const deltaTime = currentTime.getTime() - checkTime.getTime();
-    // console.log('deltaTime', deltaTime)
     const a = Math.floor((deltaTime) / (deltaRed + deltaGreen));
     const b = checkTime.getTime() + a * (deltaRed + deltaGreen);
     const c = currentTime.getTime() - b;
@@ -59,6 +59,7 @@ const TrafficLightsPage = () => {
     }
 
     const light = state.trafficLights.byId[currentLightId];
+    setCurrentLight(light);
     const metrics = state.metrics.allIds.reduce<Metric[]>((acc, id) => {
       if (state.metrics.byId[id].lightId === currentLightId) {
         acc.push(state.metrics.byId[id]);
@@ -91,11 +92,16 @@ const TrafficLightsPage = () => {
 
   const lightView = () => {
     return (
-      <>
-        <TrafficLight lightColor={ currentLightColor } />
-        <Typography>Green delta: {deltas.greenDelta / 1000} s</Typography>
-        <Typography>Red delta: {deltas.redDelta /1000} s</Typography>
-      </>
+      <Box sx={{ display: 'flex', flexDirection: { sm: 'column' } }}>
+        <Box>
+          <Typography>{ currentLight?.name }</Typography>
+          <TrafficLight lightColor={ currentLightColor } />
+        </Box>
+        <Box>
+          <Typography>Green delta: {deltas.greenDelta / 1000} s</Typography>
+          <Typography>Red delta: {deltas.redDelta /1000} s</Typography>
+        </Box>
+      </Box>
     )
   }
 
