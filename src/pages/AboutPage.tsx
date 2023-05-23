@@ -13,7 +13,7 @@ const AboutPage = () => {
       sm: 500
     },
     height: {
-      xs: '90%',
+      xs: '90svh',
       sm: 450
     },
     boxShadow: 0,

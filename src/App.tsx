@@ -39,8 +39,8 @@ function App() {
               sm: 530
             },
             height: {
-              xs: '10%',
-              sm: '7%'
+              xs: '10svh',
+              sm: '7svh'
             },
             pl: 2,
             pr: 2
