@@ -3,7 +3,8 @@ import React from "react";
 import { ELightColors, Measurement } from "../types";
 
 const StyledList = styled(List)({
-  width: '100%'
+  width: '100%',
+  overflowY: 'scroll'
 }) as typeof List
 
 const StyledListItem = styled(ListItem)({})
