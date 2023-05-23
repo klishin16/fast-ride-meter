@@ -6,10 +6,13 @@ import LightsList from "../components/LightsList";
 import TrafficLight from "../components/TrafficLight";
 
 
-const TrafficLightsContainer = styled(Box)({
+const TrafficLightsContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
-  gap: 20
-})
+  gap: 20,
+  // [theme.breakpoints.down('sm')]: {
+  //   flexDirection: 'column'
+  // }
+}));
 
 const TrafficLightsLeftCard = styled(Card)({
   display: 'flex',
@@ -98,8 +101,14 @@ const TrafficLightsPage = () => {
 
   return <>
     <TrafficLightsContainer sx={ {
-      width: 500,
-      height: 450,
+      width: {
+        xs: 1,
+        sm: 500
+      },
+      height: {
+        xs: 1,
+        sm: 450
+      },
       boxShadow: 0,
       backgroundColor: 'primary.light',
       borderRadius: 3,

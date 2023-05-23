@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import TrafficMeter from "./pages/TrafficMeter";
-import { NavLink, Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import AboutPage from "./pages/AboutPage";
 import TrafficLightsPage from "./pages/TrafficLightsPage";
 import { BottomNavigation, BottomNavigationAction } from "@mui/material";
@@ -34,9 +34,11 @@ function App() {
             setValue(newValue);
           }}
           sx={{
-            width: 530,
+            width: {
+              xs: '100%',
+              sm: 530
+            },
             pl: 2,
-            pb: 2,
             pr: 2
           }}
         >

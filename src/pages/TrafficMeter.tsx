@@ -103,12 +103,18 @@ export default function TrafficMeter() {
 
   return <>
     <TrafficMeterContainer sx={ {
-      width: 500,
-      height: 450,
+      width: {
+        xs: 1,
+        sm: 500
+      },
+      height: {
+        xs: 1,
+        sm: 450
+      },
       boxShadow: 0,
       backgroundColor: 'primary.light',
       borderRadius: 3,
-      p: 2
+      p: 2,
     } }>
       <TrafficMeterLeftCard sx={ {
         boxShadow: 1,
