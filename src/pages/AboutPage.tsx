@@ -1,28 +1,12 @@
-import { Box, styled, Typography } from "@mui/material";
-
-
-const AboutContainer = styled(Box)({
-  display: 'flex',
-  gap: 20
-})
+import { Card, Typography } from "@mui/material";
 
 const AboutPage = () => {
-  return <AboutContainer sx={{
-    width: {
-      xs: 1,
-      sm: 500
-    },
-    height: {
-      xs: '90vh',
-      sm: 450
-    },
-    boxShadow: 0,
-    backgroundColor: 'primary.light',
-    borderRadius: 3,
-    p: 2,
+  return <Card sx={{
+    width: 1,
+    p: 2
   }}>
-    <Typography>About page</Typography>
-  </AboutContainer>
+    <Typography variant='h5'>About page</Typography>
+  </Card>
 }
 
 export default AboutPage

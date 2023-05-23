@@ -1,6 +1,17 @@
-import { Divider, List, ListItem, ListItemButton, ListItemText, ListProps, styled, Typography } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  ListProps,
+  styled,
+  Typography
+} from "@mui/material";
 import React from "react";
 import { Metric } from "../types";
+import { Delete } from "@mui/icons-material";
 
 const StyledList = styled(List)({
   width: '100%'
@@ -15,27 +26,31 @@ const StyledListItemButton = styled(ListItemButton)({
 })
 
 interface ILightMetricsProps {
-  metrics: Metric[]
+  metrics: Metric[],
+  remove?: (id: string) => void
 }
 
-const LightMetrics: React.FC<ListProps & ILightMetricsProps> = ({ metrics, ...props }) => {
+const LightMetrics: React.FC<ListProps & ILightMetricsProps> = ({metrics, remove, ...props}) => {
   const listItems = metrics.map(metric =>
     <>
-      <StyledListItem disablePadding key={metric.id}>
+      <StyledListItem disablePadding key={ metric.id }>
         <StyledListItemButton>
-          <ListItemText primary={metric.redDelta} />
-          <ListItemText primary={metric.greenDelta} />
-          <ListItemText primary={metric.time.toLocaleTimeString()} />
+          <ListItemText primary={ metric.redDelta }/>
+          <ListItemText primary={ metric.greenDelta }/>
+          <ListItemText primary={ new Date(metric.time).toLocaleTimeString() }/>
         </StyledListItemButton>
+        <IconButton aria-label="delete" color="error" onClick={ () => remove && remove(metric.id) }>
+          <Delete/>
+        </IconButton>
       </StyledListItem>
     </>
   )
 
   return (
     <>
-      {!listItems.length && <Typography>No metrics</Typography>}
-      <StyledList {...props}>
-        {listItems}
+      { !listItems.length && <Box><Typography>No metrics</Typography></Box> }
+      <StyledList { ...props }>
+        { listItems }
       </StyledList>
     </>
   )

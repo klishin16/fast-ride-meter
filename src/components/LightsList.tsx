@@ -1,9 +1,11 @@
-import { Box, Divider, List, ListItem, ListItemButton, ListItemText, ListProps, styled } from "@mui/material";
+import { IconButton, List, ListItem, ListItemButton, ListProps, styled } from "@mui/material";
+import { Delete } from '@mui/icons-material';
 import React from "react";
-import { ELightColors, Light, Measurement } from "../types";
+import { Light } from "../types";
 
 const StyledList = styled(List)({
-  width: '100%'
+  width: '100%',
+  overflowY: "scroll"
 }) as typeof List
 
 const StyledListItem = styled(ListItem)({})
@@ -16,24 +18,28 @@ const StyledListItemButton = styled(ListItemButton)({
 
 interface ILightsProps {
   lights: Light[],
-  select: (id: string) => void
+  select: (id: string) => void,
+  remove?: (id: string) => void
 }
 
 
-const LightMeasurements: React.FC<ListProps & ILightsProps> = ({ lights, select, ...props }) => {
+const LightMeasurements: React.FC<ListProps & ILightsProps> = ({lights, select, remove, ...props}) => {
   const listItems = lights.map(light =>
     <>
-      <StyledListItem disablePadding key={light.id}>
-        <StyledListItemButton onClick={() => select(light.id)}>
-          {light.name}
+      <StyledListItem disablePadding key={ light.id }>
+        <StyledListItemButton onClick={ () => select(light.id) }>
+          { light.name }
         </StyledListItemButton>
+        <IconButton aria-label="delete" color="error" onClick={() => remove && remove(light.id)}>
+          <Delete/>
+        </IconButton>
       </StyledListItem>
     </>
   )
 
   return (
-    <StyledList {...props}>
-      {listItems}
+    <StyledList { ...props }>
+      { listItems }
     </StyledList>
   )
 }

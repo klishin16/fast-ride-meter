@@ -8,12 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { Metric } from "../types";
 
 
-const MeasurementsPageContainer = styled(Box)({
-  display: 'flex',
-  gap: 20
-})
-
 const MeasurementsPageLeftCard = styled(Card)({
+  flex: 1,
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
@@ -23,6 +19,7 @@ const MeasurementsPageLeftCard = styled(Card)({
 })
 
 const MeasurementsPageRightCard = styled(Card)({
+  flex: 1,
   display: 'flex',
   flexDirection: 'column',
   gap: 10,
@@ -56,6 +53,24 @@ const TrafficLightsMetricsPage = () => {
   const selectLightHandler = (id: string) => {
     setCurrentLightId(id);
   }
+
+  const removeLightHandler = (id: string) => {
+    dispatch({
+      type: ActionTypes.REMOVE_LIGHT,
+      payload: {
+        id
+      }
+    })
+  }
+
+  const removeMetricHandler = (id: string) => {
+    dispatch({
+      type: ActionTypes.REMOVE_METRIC,
+      payload: {
+        id
+      }
+    })
+  }
   const metricsContainer = () => {
     const metrics = state.metrics.allIds.reduce<Metric[]>((acc, id) => {
       if (state.metrics.byId[id].lightId === currentLightId) {
@@ -66,58 +81,60 @@ const TrafficLightsMetricsPage = () => {
     }, [])
 
     return currentLightId ? <>
-      <LightMetrics sx={{ flexGrow: 1 }} metrics={ metrics }></LightMetrics>
-      <Button sx={{ width: '100%' }} variant="contained" onClick={ () => navigate('/traffic-meter/' + currentLightId) }>New metring</Button>
+      <LightMetrics
+        sx={ {flexGrow: 1} }
+        metrics={ metrics }
+        remove={ removeMetricHandler }
+      ></LightMetrics>
+      <Button sx={ {width: '100%'} } variant="contained" onClick={ () => navigate('/traffic-meter/' + currentLightId) }>New
+        metring</Button>
     </> : <Typography>Please, select traffic light</Typography>
   }
 
   return <>
-    <MeasurementsPageContainer sx={ {
-      width: {
-        xs: 1,
-        sm: 500
-      },
-      height: {
-        xs: '90vh',
-        sm: 450
-      },
-      boxShadow: 0,
-      backgroundColor: 'primary.light',
-      borderRadius: 3,
-      p: 2,
+    <MeasurementsPageLeftCard sx={ {
+      boxShadow: 1,
+      p: 1
     } }>
-      <MeasurementsPageLeftCard sx={ {
-        boxShadow: 1,
-        p: 1
+      <Typography variant="h5" gutterBottom>
+        Traffic lights
+      </Typography>
+      <LightsList
+        sx={ {
+          flexGrow: 1
+        } }
+        lights={ state.trafficLights.allIds.map(id => state.trafficLights.byId[id]) }
+        select={ selectLightHandler }
+        remove={ removeLightHandler }/>
+      <Box sx={ {
+        display: 'flex',
+        gap: 1,
+        maxHeight: 30,
+        width: 1
       } }>
-        <Typography variant="h5" gutterBottom>
-          Traffic lights
-        </Typography>
-        <LightsList
-          sx={ {
-            flexGrow: 1
-          } }
-          lights={ state.trafficLights.allIds.map(id => state.trafficLights.byId[id]) }
-          select={ selectLightHandler }/>
-        <Box sx={ {
-          display: 'flex',
-          gap: 1,
-          maxHeight: 30
-        } }>
-          <TextField variant="standard" value={ newLight } onChange={ (v) => setNewLight(v.target.value) }/>
-          <Button variant="contained" onClick={ addLightHandler } disabled={ !newLight.length }>Add</Button>
-        </Box>
-      </MeasurementsPageLeftCard>
-      <MeasurementsPageRightCard sx={ {
-        boxShadow: 1,
-        p: 1
-      } }>
-        <Typography variant="h5" gutterBottom>
-          Metrics
-        </Typography>
-        { metricsContainer() }
-      </MeasurementsPageRightCard>
-    </MeasurementsPageContainer>
+        <TextField
+          sx={{ flex: 1 }}
+          variant="standard"
+          value={ newLight }
+          onChange={ (v) => setNewLight(v.target.value) }
+        />
+        <Button
+          sx={{ flex: 0.2 }}
+          variant="contained"
+          onClick={ addLightHandler }
+          disabled={ !newLight.length }
+        >Add</Button>
+      </Box>
+    </MeasurementsPageLeftCard>
+    <MeasurementsPageRightCard sx={ {
+      boxShadow: 1,
+      p: 1
+    } }>
+      <Typography variant="h5" gutterBottom>
+        Metrics
+      </Typography>
+      { metricsContainer() }
+    </MeasurementsPageRightCard>
   </>
 }
 
