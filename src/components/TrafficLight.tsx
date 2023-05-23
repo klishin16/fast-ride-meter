@@ -16,8 +16,8 @@ interface ITrafficLightProps {
 const TrafficLight: React.FC<ITrafficLightProps> = ({ lightColor }) => {
   return <>
     <TrafficLightBox sx={{
-      width: 120,
-      height: 280,
+      width: 100,
+      height: 240,
       backgroundColor: '#797878',
       boxShadow: 3,
       borderRadius: 3
@@ -25,22 +25,22 @@ const TrafficLight: React.FC<ITrafficLightProps> = ({ lightColor }) => {
       <Box sx={{
         borderRadius: '50%',
         backgroundColor: lightColor === ELightColors.RED ? 'error.light' : '#545454',
-        width: 70,
-        height: 70,
+        width: 60,
+        height: 60,
         boxShadow: 1,
       }}></Box>
       <Box sx={{
         borderRadius: '50%',
         backgroundColor: lightColor === ELightColors.YELLOW ? 'warning.light' : '#545454',
-        width: 70,
-        height: 70,
+        width: 60,
+        height: 60,
         boxShadow: 1,
       }}></Box>
       <Box sx={{
         borderRadius: '50%',
         backgroundColor: lightColor === ELightColors.GREEN ? 'success.light' : '#545454',
-        width: 70,
-        height: 70,
+        width: 60,
+        height: 60,
         boxShadow: 1,
       }}></Box>
     </TrafficLightBox>

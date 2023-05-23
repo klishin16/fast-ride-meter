@@ -99,33 +99,40 @@ export default function TrafficMeter() {
       p: 1,
       flex: 1,
       display: 'flex',
-      flexDirection: {
-       sm: 'column'
-      },
+      flexDirection: 'column',
       gap: 1,
       justifyContent: 'space-around',
       alignItems: 'center'
     } }>
-      <StartLight lightColor={ startColor } colorChange={ startColorHandler }/>
       <Box sx={{
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: {
+          sm: 'column'
+        },
         alignItems: 'center',
-        justifyContent: 'space-evenly',
+        justifyContent: 'space-around',
         height: {
+          xs: 1
+        },
+        width: {
           xs: 1
         }
       }}>
+        <StartLight lightColor={ startColor } colorChange={ startColorHandler }/>
         <TrafficLight lightColor={ currentColor }/>
-        <Button variant="contained" sx={ {
-          width: '100%'
-        } } onClick={ addMeasurement }>Add metering</Button>
       </Box>
+
+      <Button variant="contained" sx={ {
+        width: '100%'
+      } } onClick={ addMeasurement }>Add metering</Button>
     </TrafficMeterLeftCard>
     <TrafficMeterRightCard sx={ {
       boxShadow: 1,
       p: 1,
-      flex: 0.75
+      flex: {
+        xs: 1,
+        sm: 0.75
+      }
     } }>
       <Typography variant="h5" gutterBottom>
         Measurements
