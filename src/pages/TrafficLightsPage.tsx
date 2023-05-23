@@ -94,10 +94,10 @@ const TrafficLightsPage = () => {
     return (
       <Box sx={{ display: 'flex', flexDirection: { sm: 'column' } }}>
         <Box>
-          <Typography>{ currentLight?.name }</Typography>
           <TrafficLight lightColor={ currentLightColor } />
         </Box>
         <Box>
+          <Typography>{ currentLight?.name }</Typography>
           <Typography>Green delta: {deltas.greenDelta / 1000} s</Typography>
           <Typography>Red delta: {deltas.redDelta /1000} s</Typography>
         </Box>
@@ -111,9 +111,6 @@ const TrafficLightsPage = () => {
       p: 1,
       flex: 1
     } }>
-      <Typography variant="h5" gutterBottom>
-        Current light
-      </Typography>
       { lightContainer() }
     </TrafficLightsLeftCard>
     <TrafficLightsRightCard sx={ {
