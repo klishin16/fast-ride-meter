@@ -1,6 +1,6 @@
 import TrafficLight from "../components/TrafficLight";
 import StartLight from "../components/StartLight";
-import { Button, Card, styled, Typography } from "@mui/material";
+import { Box, Button, Card, styled, Typography } from "@mui/material";
 import LightMeasurements from "../components/LightMeasurements";
 import MeasurementsProgress from "../components/MeasurementsProgress";
 import React, { useContext, useEffect } from "react";
@@ -11,11 +11,6 @@ import { v4 as uuid } from 'uuid';
 
 
 const TrafficMeterLeftCard = styled(Card)({
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-  gap: 10,
-  alignItems: 'center',
   width: '100%',
 })
 
@@ -102,13 +97,30 @@ export default function TrafficMeter() {
     <TrafficMeterLeftCard sx={ {
       boxShadow: 1,
       p: 1,
-      flex: 1
+      flex: 1,
+      display: 'flex',
+      flexDirection: {
+       sm: 'column'
+      },
+      gap: 1,
+      justifyContent: 'space-around',
+      alignItems: 'center'
     } }>
       <StartLight lightColor={ startColor } colorChange={ startColorHandler }/>
-      <TrafficLight lightColor={ currentColor }/>
-      <Button variant="contained" sx={ {
-        width: '100%'
-      } } onClick={ addMeasurement }>Add metering</Button>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'space-evenly',
+        height: {
+          xs: 1
+        }
+      }}>
+        <TrafficLight lightColor={ currentColor }/>
+        <Button variant="contained" sx={ {
+          width: '100%'
+        } } onClick={ addMeasurement }>Add metering</Button>
+      </Box>
     </TrafficMeterLeftCard>
     <TrafficMeterRightCard sx={ {
       boxShadow: 1,
