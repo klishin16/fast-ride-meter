@@ -65,13 +65,16 @@ export default function TrafficMeter() {
     const times = measurements.map(m => m.time);
     const redDelta = startColor === ELightColors.RED ? (times[2].getTime() - times[1].getTime()) : (times[1].getTime() - times[0].getTime())
     const greenDelta = startColor === ELightColors.GREEN ? (times[2].getTime() - times[1].getTime()) : (times[1].getTime() - times[0].getTime())
+    const time = new Date((ELightColors.RED ? times[0] : times[1]));
+    time.setMilliseconds(0);
+    console.log('time', time)
 
     dispatch({
       type: ActionTypes.ADD_METRIC,
       payload: {
         id,
         lightId: lightId ?? '1',
-        time: startColor === ELightColors.RED ? times[0] : times[1], // TODO надо правильно подумать
+        time, // TODO надо правильно подумать
         redDelta: Math.floor(redDelta / 1000) * 1000,
         greenDelta: Math.floor(greenDelta / 1000) * 1000
       }
@@ -87,10 +90,6 @@ export default function TrafficMeter() {
     setCurrentColor(startColor === ELightColors.RED ? ELightColors.GREEN : ELightColors.RED);
     resetMeasurements();
   }, [startColor])
-
-  useEffect(() => {
-    console.log(lightId);
-  }, [])
 
   return <>
 

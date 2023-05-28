@@ -32,14 +32,16 @@ const TrafficLightsPage = () => {
 
   const [currentIntervalId, setCurrentIntervalId] = useState<number>(0);
 
-  const [deltas, setDeltas] = useState({ redDelta: 0, greenDelta: 0 })
+  const [deltas, setDeltas] = useState({redDelta: 0, greenDelta: 0});
+  const [timeLeft, setTimeLeft] = useState<number>(0);
   const selectLightHandler = (id: string) => {
     setCurrentLightId(id);
   }
   const createTrafficLightChecker = (checkTime: Date, deltaRed: number, deltaGreen: number) => {
     return window.setInterval(() => {
-      const newColor = checkLightState(checkTime, deltaRed, deltaGreen);
-      setCurrentLightColor(newColor);
+      const { color, timeLeft } = checkLightState(checkTime, deltaRed, deltaGreen);
+      setCurrentLightColor(color);
+      setTimeLeft(timeLeft);
     }, 1000);
   }
 
@@ -50,7 +52,10 @@ const TrafficLightsPage = () => {
     const a = Math.floor((deltaTime) / (deltaRed + deltaGreen));
     const b = checkTime.getTime() + a * (deltaRed + deltaGreen);
     const c = currentTime.getTime() - b;
-    return c <= deltaGreen ? ELightColors.GREEN : ELightColors.RED;
+    return {
+      color: c <= deltaGreen ? ELightColors.GREEN : ELightColors.RED,
+      timeLeft: c <= deltaGreen ? deltaGreen - c : deltaGreen + deltaRed - c
+    };
   }
 
   useEffect(() => {
@@ -74,12 +79,11 @@ const TrafficLightsPage = () => {
     }
 
     if (!!currentIntervalId) {
-      console.log('currentIntervalCleaner', currentIntervalId)
       window.clearInterval(currentIntervalId);
     }
     setCurrentIntervalId(createTrafficLightChecker(new Date(metrics[0].time), metrics[0].redDelta!, metrics[0].greenDelta!));
 
-    setDeltas({ redDelta: metrics[0].redDelta!, greenDelta: metrics[0].greenDelta! })
+    setDeltas({redDelta: metrics[0].redDelta!, greenDelta: metrics[0].greenDelta!})
   }, [currentLightId])
 
   const lightContainer = () => {
@@ -92,14 +96,15 @@ const TrafficLightsPage = () => {
 
   const lightView = () => {
     return (
-      <Box sx={{ display: 'flex', flexDirection: { sm: 'column' } }}>
+      <Box sx={ {display: 'flex', flexDirection: {sm: 'column'}} }>
         <Box>
-          <TrafficLight lightColor={ currentLightColor } />
+          <TrafficLight lightColor={ currentLightColor }/>
         </Box>
         <Box>
           <Typography>{ currentLight?.name }</Typography>
-          <Typography>Green delta: {deltas.greenDelta / 1000} s</Typography>
-          <Typography>Red delta: {deltas.redDelta /1000} s</Typography>
+          <Typography>Green delta: { deltas.greenDelta / 1000 } s</Typography>
+          <Typography>Red delta: { deltas.redDelta / 1000 } s</Typography>
+          <Typography>Time left: { timeLeft / 1000 } s</Typography>
         </Box>
       </Box>
     )
