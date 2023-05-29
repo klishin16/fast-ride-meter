@@ -67,14 +67,13 @@ export default function TrafficMeter() {
     const greenDelta = startColor === ELightColors.GREEN ? (times[2].getTime() - times[1].getTime()) : (times[1].getTime() - times[0].getTime())
     const time = new Date((ELightColors.RED ? times[0] : times[1]));
     time.setMilliseconds(0);
-    console.log('time', time)
 
     dispatch({
       type: ActionTypes.ADD_METRIC,
       payload: {
         id,
         lightId: lightId ?? '1',
-        time, // TODO надо правильно подумать
+        time,
         redDelta: Math.floor(redDelta / 1000) * 1000,
         greenDelta: Math.floor(greenDelta / 1000) * 1000
       }
@@ -103,7 +102,7 @@ export default function TrafficMeter() {
       justifyContent: 'space-around',
       alignItems: 'center'
     } }>
-      <Box sx={{
+      <Box sx={ {
         display: 'flex',
         flexDirection: {
           sm: 'column'
@@ -116,7 +115,7 @@ export default function TrafficMeter() {
         width: {
           xs: 1
         }
-      }}>
+      } }>
         <StartLight lightColor={ startColor } colorChange={ startColorHandler }/>
         <TrafficLight lightColor={ currentColor }/>
       </Box>

@@ -1,4 +1,4 @@
-import { Box, Card, styled, Typography } from "@mui/material";
+import { Box, Card, LinearProgress, styled, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { ELightColors, Light, Metric } from "../types";
 import { TrafficLightsContext } from "../state/TrafficLightsContext";
@@ -34,14 +34,18 @@ const TrafficLightsPage = () => {
 
   const [deltas, setDeltas] = useState({redDelta: 0, greenDelta: 0});
   const [timeLeft, setTimeLeft] = useState<number>(0);
+  const [progress, setProgress] = useState<number>(0);
   const selectLightHandler = (id: string) => {
     setCurrentLightId(id);
   }
   const createTrafficLightChecker = (checkTime: Date, deltaRed: number, deltaGreen: number) => {
     return window.setInterval(() => {
-      const { color, timeLeft } = checkLightState(checkTime, deltaRed, deltaGreen);
+      const {color, timeLeft} = checkLightState(checkTime, deltaRed, deltaGreen);
       setCurrentLightColor(color);
       setTimeLeft(timeLeft);
+      const currentDelta = color === ELightColors.RED ? deltas.redDelta : deltas.greenDelta;
+      const t = (currentDelta - timeLeft) / currentDelta * 100;
+      setProgress(t);
     }, 1000);
   }
 
@@ -78,17 +82,17 @@ const TrafficLightsPage = () => {
       return;
     }
 
+    setDeltas({redDelta: metrics[0].redDelta!, greenDelta: metrics[0].greenDelta!});
+
     if (!!currentIntervalId) {
       window.clearInterval(currentIntervalId);
     }
     setCurrentIntervalId(createTrafficLightChecker(new Date(metrics[0].time), metrics[0].redDelta!, metrics[0].greenDelta!));
-
-    setDeltas({redDelta: metrics[0].redDelta!, greenDelta: metrics[0].greenDelta!})
   }, [currentLightId])
 
   const lightContainer = () => {
     return (
-      <Box sx={ {flexGrow: 1} }>
+      <Box sx={ {flexGrow: 1, width: 1} }>
         { currentLightId ? lightView() : <Typography>Please, select traffic light</Typography> }
       </Box>
     )
@@ -96,15 +100,19 @@ const TrafficLightsPage = () => {
 
   const lightView = () => {
     return (
-      <Box sx={ {display: 'flex', flexDirection: {sm: 'column'}} }>
+      <Box sx={ {display: 'flex', flexDirection: {sm: 'column'}, alignItems: 'center', gap: 1} }>
         <Box>
           <TrafficLight lightColor={ currentLightColor }/>
         </Box>
-        <Box>
+        <Box sx={{ width: 1 }}>
           <Typography>{ currentLight?.name }</Typography>
           <Typography>Green delta: { deltas.greenDelta / 1000 } s</Typography>
           <Typography>Red delta: { deltas.redDelta / 1000 } s</Typography>
           <Typography>Time left: { timeLeft / 1000 } s</Typography>
+          <LinearProgress
+            color={ currentLightColor === ELightColors.RED ? 'error' : 'success' }
+            variant="determinate"
+            value={progress} />
         </Box>
       </Box>
     )
