@@ -26,26 +26,21 @@ const TrafficLightsRightCard = styled(Card)({
 const TrafficLightsPage = () => {
   const {state} = useContext(TrafficLightsContext);
 
-  const [currentLightId, setCurrentLightId] = useState<string | null>(null);
-  const [currentLight, setCurrentLight] = useState<Light | null>(null);
+  const [lightId, setLightId] = useState<string | null>(null);
+  const [light, setLight] = useState<Light | null>(null);
   const [currentLightColor, setCurrentLightColor] = useState<ELightColors>(ELightColors.RED); // Текущий цвет
-
   const [currentIntervalId, setCurrentIntervalId] = useState<number>(0);
 
-  const [deltas, setDeltas] = useState({redDelta: 0, greenDelta: 0});
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
-  const selectLightHandler = (id: string) => {
-    setCurrentLightId(id);
-  }
+
   const createTrafficLightChecker = (checkTime: Date, deltaRed: number, deltaGreen: number) => {
     return window.setInterval(() => {
       const {color, timeLeft} = checkLightState(checkTime, deltaRed, deltaGreen);
+      console.log(color, timeLeft)
       setCurrentLightColor(color);
       setTimeLeft(timeLeft);
-      const currentDelta = color === ELightColors.RED ? deltas.redDelta : deltas.greenDelta;
-      const t = (currentDelta - timeLeft) / currentDelta * 100;
-      setProgress(t);
+      updateProgress(timeLeft);
     }, 1000);
   }
 
@@ -62,57 +57,60 @@ const TrafficLightsPage = () => {
     };
   }
 
+  const updateProgress = (time: number) => {
+    if (!light) {
+      return
+    }
+    const currentDelta = currentLightColor === ELightColors.RED ? light.redDelta : light.greenDelta;
+    console.log('currentDelta', currentDelta, 'timeLeft', time)
+    const t = (currentDelta - time) / currentDelta * 100;
+    setProgress(t);
+  }
+
   useEffect(() => {
-    if (!currentLightId) {
+    if (!lightId) {
       return;
     }
 
-    const light = state.trafficLights.byId[currentLightId];
-    setCurrentLight(light);
-    const metrics = state.metrics.allIds.reduce<Metric[]>((acc, id) => {
-      if (state.metrics.byId[id].lightId === currentLightId) {
-        acc.push(state.metrics.byId[id]);
-      }
-
-      return acc;
-    }, [])
-    console.log('metrics', metrics);
-    if (!metrics.length) {
-      console.log('error: no metrics!');
-      return;
-    }
-
-    setDeltas({redDelta: metrics[0].redDelta!, greenDelta: metrics[0].greenDelta!});
+    const light = state.trafficLights.byId[lightId];
+    setLight(light);
 
     if (!!currentIntervalId) {
       window.clearInterval(currentIntervalId);
     }
-    setCurrentIntervalId(createTrafficLightChecker(new Date(metrics[0].time), metrics[0].redDelta!, metrics[0].greenDelta!));
-  }, [currentLightId])
+    setCurrentIntervalId(createTrafficLightChecker(new Date(light.times[0]), light.redDelta, light.greenDelta));
+  }, [lightId]);
+
+  const selectLightHandler = (id: string) => {
+    setLightId(id);
+  }
 
   const lightContainer = () => {
     return (
       <Box sx={ {flexGrow: 1, width: 1} }>
-        { currentLightId ? lightView() : <Typography>Please, select traffic light</Typography> }
+        { lightId ? lightView() : <Typography>Please, select traffic light</Typography> }
       </Box>
     )
   }
 
   const lightView = () => {
     return (
-      <Box sx={ {display: 'flex', flexDirection: {sm: 'column'}, alignItems: 'center', gap: 1} }>
+      <Box sx={ {display: 'flex', flexDirection: {sm: 'column'}, alignItems: 'center', gap: 1, height: 1} }>
         <Box>
           <TrafficLight lightColor={ currentLightColor }/>
         </Box>
-        <Box sx={{ width: 1 }}>
-          <Typography>{ currentLight?.name }</Typography>
-          <Typography>Green delta: { deltas.greenDelta / 1000 } s</Typography>
-          <Typography>Red delta: { deltas.redDelta / 1000 } s</Typography>
-          <Typography>Time left: { timeLeft / 1000 } s</Typography>
-          <LinearProgress
-            color={ currentLightColor === ELightColors.RED ? 'error' : 'success' }
-            variant="determinate"
-            value={progress} />
+        <Box sx={ {width: 1} }>
+          { light && <>
+              <Typography>{ light.name }</Typography>
+              <Typography>Green delta: { light.greenDelta / 1000 } s</Typography>
+              <Typography>Red delta: { light.redDelta / 1000 } s</Typography>
+              <Typography>Time left: { timeLeft / 1000 } s</Typography>
+              <LinearProgress
+                  color={ currentLightColor === ELightColors.RED ? 'error' : 'success' }
+                  variant="determinate"
+                  value={ progress }/>
+          </> }
+
         </Box>
       </Box>
     )

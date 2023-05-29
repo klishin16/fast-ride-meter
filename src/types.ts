@@ -7,16 +7,17 @@ export enum ELightColors {
 export interface Light {
   id: string;
   name: string;
-  metrics: Metric[];
+  greenDelta: number;
+  redDelta: number;
+  times: Date[];
 }
 
 export interface Metric {
   id: string;
   lightId: string;
-  greenDelta?: number;
-  redDelta?: number;
+  greenDelta: number;
+  redDelta: number;
   time: Date;
-  measurements: Measurement[];
   // comments: any
 }
 

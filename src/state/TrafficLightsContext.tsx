@@ -18,12 +18,16 @@ const initialState: ITrafficLightsState = {
       '1': {
         id: '1',
         name: 'Test light',
-        metrics: []
+        redDelta: 1000,
+        greenDelta: 3000,
+        times: [new Date()]
       },
       '2': {
         id: '2',
         name: 'Test light 2',
-        metrics: []
+        redDelta: 3000,
+        greenDelta: 5000,
+        times: [new Date()]
       }
     },
     allIds: ['1', '2']
@@ -94,7 +98,9 @@ export const trafficLightReducer = (state: ITrafficLightsState, action: TrafficL
       const lights = state.trafficLights.byId;
       lights[action.payload.id] = {
         ...action.payload,
-        metrics: []
+        redDelta: 0,
+        greenDelta: 0,
+        times: []
       }
       return {
         ...state,
@@ -114,11 +120,24 @@ export const trafficLightReducer = (state: ITrafficLightsState, action: TrafficL
         }
       }
     case ActionTypes.ADD_METRIC:
+      const lights2 = state.trafficLights.byId;
       const metrics = state.metrics.byId;
-      metrics[action.payload.id] = {
-        ...action.payload,
-        measurements: []
+      const lightMetrics = state.metrics.allIds.reduce<Metric[]>((acc, id) => {
+        if (state.metrics.byId[id].lightId === action.payload.lightId) {
+          acc.push(state.metrics.byId[id]);
+        }
+
+        return acc;
+      }, [])
+      const redDelta = lightMetrics.reduce((redDeltaSum, metric) => redDeltaSum + metric.redDelta, 0) / lightMetrics.length;
+      const greenDelta = lightMetrics.reduce((greenDeltaSum, metric) => greenDeltaSum + metric.greenDelta, 0) / lightMetrics.length;
+      lights2[action.payload.lightId] = {
+        ...lights2[action.payload.lightId],
+        redDelta: redDelta,
+        greenDelta: greenDelta,
+        times: lightMetrics.map(metric => metric.time) ?? []
       }
+      metrics[action.payload.id] = { ...action.payload }
       return {
         ...state,
         metrics: {
