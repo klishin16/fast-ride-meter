@@ -68,7 +68,8 @@ export enum ActionTypes {
   ADD_LIGHT = 'add_light',
   REMOVE_LIGHT = 'remove_light',
   ADD_METRIC = 'add_metric',
-  REMOVE_METRIC = 'remove_metric'
+  REMOVE_METRIC = 'remove_metric',
+  CLEAR_DB = 'clear_db'
 }
 
 type TrafficLightsPayload = {
@@ -89,6 +90,7 @@ type TrafficLightsPayload = {
   [ActionTypes.REMOVE_METRIC]: {
     id: string;
   },
+  [ActionTypes.CLEAR_DB]: {},
 }
 
 export type TrafficLightActions = ActionMap<TrafficLightsPayload>[keyof ActionMap<TrafficLightsPayload>];
@@ -155,6 +157,8 @@ export const trafficLightReducer = (state: ITrafficLightsState, action: TrafficL
           allIds: state.metrics.allIds.filter((id) => id !== action.payload.id)
         }
       }
+    case ActionTypes.CLEAR_DB:
+      return initialState
     default:
       return state;
   }
