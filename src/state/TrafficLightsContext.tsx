@@ -124,6 +124,7 @@ export const trafficLightReducer = (state: ITrafficLightsState, action: TrafficL
     case ActionTypes.ADD_METRIC:
       const lights2 = state.trafficLights.byId;
       const metrics = state.metrics.byId;
+      metrics[action.payload.id] = { ...action.payload };
       const lightMetrics = state.metrics.allIds.reduce<Metric[]>((acc, id) => {
         if (state.metrics.byId[id].lightId === action.payload.lightId) {
           acc.push(state.metrics.byId[id]);
@@ -139,7 +140,6 @@ export const trafficLightReducer = (state: ITrafficLightsState, action: TrafficL
         greenDelta: greenDelta,
         times: lightMetrics.map(metric => metric.time) ?? []
       }
-      metrics[action.payload.id] = { ...action.payload }
       return {
         ...state,
         metrics: {
