@@ -123,8 +123,9 @@ export const trafficLightReducer = (state: ITrafficLightsState, action: TrafficL
       }
     case ActionTypes.ADD_METRIC:
       const lights2 = state.trafficLights.byId;
-      const metrics = state.metrics.byId;
-      metrics[action.payload.id] = { ...action.payload };
+      const metrics = state.metrics;
+      metrics.byId[action.payload.id] = { ...action.payload };
+      metrics.allIds = state.metrics.allIds.concat(action.payload.id);
       const lightMetrics = state.metrics.allIds.reduce<Metric[]>((acc, id) => {
         if (state.metrics.byId[id].lightId === action.payload.lightId) {
           acc.push(state.metrics.byId[id]);
@@ -134,6 +135,7 @@ export const trafficLightReducer = (state: ITrafficLightsState, action: TrafficL
       }, [])
       const redDelta = lightMetrics.reduce((redDeltaSum, metric) => redDeltaSum + metric.redDelta, 0) / lightMetrics.length;
       const greenDelta = lightMetrics.reduce((greenDeltaSum, metric) => greenDeltaSum + metric.greenDelta, 0) / lightMetrics.length;
+      console.log(redDelta, greenDelta)
       lights2[action.payload.lightId] = {
         ...lights2[action.payload.lightId],
         redDelta: redDelta,
@@ -142,10 +144,7 @@ export const trafficLightReducer = (state: ITrafficLightsState, action: TrafficL
       }
       return {
         ...state,
-        metrics: {
-          byId: metrics,
-          allIds: state.metrics.allIds.concat(action.payload.id)
-        }
+        metrics
       }
     case ActionTypes.REMOVE_METRIC:
       const metrics1 = state.metrics.byId;

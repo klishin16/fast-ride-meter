@@ -10,13 +10,11 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <React.StrictMode>
     <Router>
       <TrafficLightsProvider>
         <App />
       </TrafficLightsProvider>
     </Router>
-  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function
