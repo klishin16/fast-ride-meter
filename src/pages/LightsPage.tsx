@@ -103,7 +103,6 @@ const LightsPage = () => {
               <Typography>Green delta: { light.greenDelta / 1000 } s</Typography>
               <Typography>Red delta: { light.redDelta / 1000 } s</Typography>
               <Typography>Time left: { Math.round(timeLeft / 100) / 10 } s</Typography>
-            { progress }
               <BorderLinearProgress
                   color={ currentLightColor === ELightColors.RED ? 'error' : 'success' }
                   variant="determinate"
