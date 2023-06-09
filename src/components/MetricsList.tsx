@@ -30,7 +30,7 @@ interface ILightMetricsProps {
   remove?: (id: string) => void
 }
 
-const LightMetrics: React.FC<ListProps & ILightMetricsProps> = ({metrics, remove, ...props}) => {
+const MetricsList: React.FC<ListProps & ILightMetricsProps> = ({metrics, remove, ...props}) => {
   const listItems = metrics.map(metric =>
     <>
       <StyledListItem disablePadding key={ metric.id }>
@@ -56,4 +56,4 @@ const LightMetrics: React.FC<ListProps & ILightMetricsProps> = ({metrics, remove
   )
 }
 
-export default LightMetrics
+export default MetricsList

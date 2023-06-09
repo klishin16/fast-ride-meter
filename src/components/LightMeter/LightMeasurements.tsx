@@ -1,6 +1,6 @@
 import { Box, Divider, List, ListItem, ListItemButton, ListItemText, ListProps, styled } from "@mui/material";
 import React from "react";
-import { ELightColors, Measurement } from "../types";
+import { ELightColors, Measurement } from "../../types";
 
 const StyledList = styled(List)({
   width: '100%',
@@ -29,7 +29,6 @@ const getLightColor = (color: ELightColors) => {
       return 'success.light'
   }
 }
-
 
 const LightMeasurements: React.FC<ListProps & LightMeasurementsProps> = ({ measurements, ...props }) => {
   const listItems = measurements.map(measurement =>

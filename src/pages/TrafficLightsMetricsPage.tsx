@@ -1,11 +1,12 @@
-import { Box, Button, Card, styled, TextField, Typography } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import { Button, Card, styled, Typography } from "@mui/material";
+import React, { useContext, useState } from "react";
 import { ActionTypes, TrafficLightsContext } from "../state/TrafficLightsContext";
-import LightMetrics from "../components/LightMetrics";
+import MetricsList from "../components/MetricsList";
 import LightsList from "../components/LightsList";
-import { v4 as uuid } from 'uuid';
 import { useNavigate } from "react-router-dom";
 import { Metric } from "../types";
+import LightCreator from "../components/LightCreator";
+import LightEditor from "../components/LightEditor";
 
 
 const MeasurementsPageLeftCard = styled(Card)({
@@ -33,23 +34,7 @@ const TrafficLightsMetricsPage = () => {
 
   const [currentLightId, setCurrentLightId] = useState<string | null>(null);
 
-  const [newLight, setNewLight] = useState('');
 
-  useEffect(() => {
-    console.log(state)
-  }, [])
-
-  const addLightHandler = () => {
-    const id = uuid();
-    dispatch({
-      type: ActionTypes.ADD_LIGHT,
-      payload: {
-        id,
-        name: newLight
-      }
-    })
-    setNewLight('');
-  }
   const selectLightHandler = (id: string) => {
     setCurrentLightId(id);
   }
@@ -81,11 +66,11 @@ const TrafficLightsMetricsPage = () => {
     }, [])
 
     return currentLightId ? <>
-      <LightMetrics
+      <MetricsList
         sx={ {flexGrow: 1} }
         metrics={ metrics }
         remove={ removeMetricHandler }
-      ></LightMetrics>
+      ></MetricsList>
       <Button sx={ {width: '100%'} } variant="contained" onClick={ () => navigate('/traffic-meter/' + currentLightId) }>New
         metring</Button>
     </> : <Typography>Please, select traffic light</Typography>
@@ -105,32 +90,16 @@ const TrafficLightsMetricsPage = () => {
         } }
         lights={ state.trafficLights.allIds.map(id => state.trafficLights.byId[id]) }
         select={ selectLightHandler }
-        remove={ removeLightHandler }/>
-      <Box sx={ {
-        display: 'flex',
-        gap: 1,
-        maxHeight: 30,
-        width: 1
-      } }>
-        <TextField
-          sx={{ flex: 1 }}
-          variant="standard"
-          value={ newLight }
-          onChange={ (v) => setNewLight(v.target.value) }
-        />
-        <Button
-          sx={{ flex: 0.2 }}
-          variant="contained"
-          onClick={ addLightHandler }
-          disabled={ !newLight.length }
-        >Add</Button>
-      </Box>
+        remove={ removeLightHandler }
+      />
+      <LightCreator/>
     </MeasurementsPageLeftCard>
     <MeasurementsPageRightCard sx={ {
       boxShadow: 1,
       p: 1
     } }>
-      <Typography variant="h5" gutterBottom>
+      {currentLightId && <LightEditor id={currentLightId} />}
+      <Typography variant="h6" gutterBottom>
         Metrics
       </Typography>
       { metricsContainer() }

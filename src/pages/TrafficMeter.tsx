@@ -1,8 +1,8 @@
-import TrafficLight from "../components/TrafficLight";
-import StartLight from "../components/StartLight";
+import TrafficLightViewer from "../components/TrafficLightViewer";
+import StartLight from "../components/LightMeter/StartLight";
 import { Box, Button, Card, styled, Typography } from "@mui/material";
-import LightMeasurements from "../components/LightMeasurements";
-import MeasurementsProgress from "../components/MeasurementsProgress";
+import LightMeasurements from "../components/LightMeter/LightMeasurements";
+import MeasurementsProgress from "../components/LightMeter/MeasurementsProgress";
 import React, { useContext, useEffect } from "react";
 import { ELightColors, Measurement } from "../types";
 import { useNavigate, useParams } from "react-router-dom";
@@ -117,7 +117,7 @@ export default function TrafficMeter() {
         }
       } }>
         <StartLight lightColor={ startColor } colorChange={ startColorHandler }/>
-        <TrafficLight lightColor={ currentColor }/>
+        <TrafficLightViewer lightColor={ currentColor }/>
       </Box>
 
       <Button variant="contained" sx={ {

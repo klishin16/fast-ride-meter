@@ -1,5 +1,6 @@
 import React, { createContext, useReducer } from "react";
 import { Light, Metric } from "../types";
+import { produce } from "immer";
 
 interface ITrafficLightsState {
   trafficLights: {
@@ -66,6 +67,7 @@ const getSavedState = (): ITrafficLightsState | null => {
 
 export enum ActionTypes {
   ADD_LIGHT = 'add_light',
+  PATCH_LIGHT = 'patch_light',
   REMOVE_LIGHT = 'remove_light',
   ADD_METRIC = 'add_metric',
   REMOVE_METRIC = 'remove_metric',
@@ -73,10 +75,17 @@ export enum ActionTypes {
 }
 
 type TrafficLightsPayload = {
-  [ActionTypes.ADD_LIGHT] : {
+  [ActionTypes.ADD_LIGHT]: {
     id: string;
     name: string;
   };
+  [ActionTypes.PATCH_LIGHT]: {
+    id: string;
+    name: string;
+    times: Date[];
+    redDelta: number;
+    greenDelta: number;
+  }
   [ActionTypes.REMOVE_LIGHT]: {
     id: string;
   },
@@ -97,30 +106,27 @@ export type TrafficLightActions = ActionMap<TrafficLightsPayload>[keyof ActionMa
 export const trafficLightReducer = (state: ITrafficLightsState, action: TrafficLightActions) => {
   switch (action.type) {
     case ActionTypes.ADD_LIGHT:
-      const lights = state.trafficLights.byId;
-      lights[action.payload.id] = {
-        ...action.payload,
-        redDelta: 0,
-        greenDelta: 0,
-        times: []
-      }
-      return {
-        ...state,
-        trafficLights: {
-          byId: lights,
-          allIds: state.trafficLights.allIds.concat(action.payload.id)
-        }
-      } as ITrafficLightsState
+      return produce(state, (draft) => {
+        draft.trafficLights.byId[action.payload.id] = {
+          ...action.payload,
+          redDelta: 0,
+          greenDelta: 0,
+          times: []
+        };
+        draft.trafficLights.allIds.push(action.payload.id)
+      })
+
+    case ActionTypes.PATCH_LIGHT:
+      return produce(state, (draft) => {
+        draft.trafficLights.byId[action.payload.id] = action.payload
+      })
+
     case ActionTypes.REMOVE_LIGHT:
-      const lights1 = state.trafficLights.byId;
-      delete lights1[action.payload.id];
-      return {
-        ...state,
-        trafficLights: {
-          byId: lights1,
-          allIds: state.trafficLights.allIds.filter((id) => id !== action.payload.id)
-        }
-      }
+      return produce(state, (draft) => {
+        delete draft.trafficLights.byId[action.payload.id];
+        draft.trafficLights.allIds = draft.trafficLights.allIds.filter((id) => id !== action.payload.id)
+      })
+
     case ActionTypes.ADD_METRIC:
       const lights2 = state.trafficLights.byId;
       const metrics = state.metrics;

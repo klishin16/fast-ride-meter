@@ -13,7 +13,7 @@ interface ITrafficLightProps {
   lightColor: ELightColors
 }
 
-const TrafficLight: React.FC<ITrafficLightProps> = ({ lightColor }) => {
+const TrafficLightViewer: React.FC<ITrafficLightProps> = ({ lightColor }) => {
   return <>
     <TrafficLightBox sx={{
       width: 100,
@@ -47,4 +47,4 @@ const TrafficLight: React.FC<ITrafficLightProps> = ({ lightColor }) => {
   </>
 }
 
-export default TrafficLight
+export default TrafficLightViewer

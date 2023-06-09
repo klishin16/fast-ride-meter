@@ -1,9 +1,9 @@
 import { Box, Card, LinearProgress, styled, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
-import { ELightColors, Light, Metric } from "../types";
+import { ELightColors, Light } from "../types";
 import { TrafficLightsContext } from "../state/TrafficLightsContext";
 import LightsList from "../components/LightsList";
-import TrafficLight from "../components/TrafficLight";
+import TrafficLightViewer from "../components/TrafficLightViewer";
 
 
 const TrafficLightsLeftCard = styled(Card)({
@@ -41,7 +41,7 @@ const TrafficLightsPage = () => {
       setCurrentLightColor(color);
       setTimeLeft(timeLeft);
       updateProgress(timeLeft);
-    }, 1000);
+    }, 100);
   }
 
   const checkLightState = (checkTime: Date, deltaRed: number, deltaGreen: number) => {
@@ -97,7 +97,7 @@ const TrafficLightsPage = () => {
     return (
       <Box sx={ {display: 'flex', flexDirection: {sm: 'column'}, alignItems: 'center', gap: 1, height: 1} }>
         <Box>
-          <TrafficLight lightColor={ currentLightColor }/>
+          <TrafficLightViewer lightColor={ currentLightColor }/>
         </Box>
         <Box sx={ {width: 1} }>
           { light && <>
