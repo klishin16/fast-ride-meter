@@ -28,7 +28,7 @@ const MeasurementsPageRightCard = styled(Card)({
   width: '100%'
 })
 
-const TrafficLightsMetricsPage = () => {
+const MetricsPage = () => {
   const {state, dispatch} = useContext(TrafficLightsContext);
   const navigate = useNavigate();
 
@@ -96,15 +96,22 @@ const TrafficLightsMetricsPage = () => {
     </MeasurementsPageLeftCard>
     <MeasurementsPageRightCard sx={ {
       boxShadow: 1,
-      p: 1
+      p: 1,
+      display: 'flex',
+      flexDirection: {xs: 'row', sm: 'column'}
     } }>
-      {currentLightId && <LightEditor id={currentLightId} />}
-      <Typography variant="h6" gutterBottom>
-        Metrics
-      </Typography>
-      { metricsContainer() }
+      {currentLightId && <div>
+          <Typography variant="body1" gutterBottom>Edit</Typography>
+          <LightEditor id={currentLightId} />
+      </div>}
+      <div>
+        <Typography variant="body1" gutterBottom>
+          Metrics
+        </Typography>
+        { metricsContainer() }
+      </div>
     </MeasurementsPageRightCard>
   </>
 }
 
-export default TrafficLightsMetricsPage
+export default MetricsPage

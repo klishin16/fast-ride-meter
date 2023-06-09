@@ -6,7 +6,7 @@ import AboutPage from "./pages/AboutPage";
 import TrafficLightsPage from "./pages/TrafficLightsPage";
 import { BottomNavigation, BottomNavigationAction, Box, styled } from "@mui/material";
 import { Home, Info, Traffic } from '@mui/icons-material';
-import TrafficLightsMetricsPage from "./pages/TrafficLightsMetricsPage";
+import MetricsPage from "./pages/MetricsPage";
 
 
 const AppPagesContainer = styled(Box)(({ theme }) => ({
@@ -48,7 +48,7 @@ function App() {
             <Route path="/" element={ <TrafficLightsPage/> }/>
             <Route path="traffic-meter" element={ <TrafficMeter/> }/>
             <Route path="traffic-meter/:lightId" element={ <TrafficMeter/> }/>
-            <Route path="measurements" element={ <TrafficLightsMetricsPage/> }/>
+            <Route path="measurements" element={ <MetricsPage/> }/>
             <Route path="about" element={ <AboutPage/> }/>
           </Routes>
         </AppPagesContainer>
