@@ -23,7 +23,12 @@ const TrafficLightsRightCard = styled(Card)({
   width: '100%'
 })
 
-const TrafficLightsPage = () => {
+const BorderLinearProgress = styled(LinearProgress)(({theme}) => ({
+  height: 25,
+  borderRadius: 5
+}));
+
+const LightsPage = () => {
   const {state} = useContext(TrafficLightsContext);
 
   const [lightId, setLightId] = useState<string | null>(null);
@@ -34,18 +39,17 @@ const TrafficLightsPage = () => {
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
 
-  const createTrafficLightChecker = (checkTime: Date, deltaRed: number, deltaGreen: number) => {
+  const createTrafficLightChecker = (light: Light) => {
     return window.setInterval(() => {
-      const {color, timeLeft} = checkLightState(checkTime, deltaRed, deltaGreen);
-      console.log(color, timeLeft)
+      const {color, timeLeft} = checkLightState(new Date(light.times[0]), light.redDelta, light.greenDelta);
       setCurrentLightColor(color);
       setTimeLeft(timeLeft);
-      updateProgress(timeLeft);
+      setProgress(calculateProgress(light!, timeLeft, color) ?? 0);
     }, 100);
   }
 
+  /** PURE FUNCTIONS ZONE */
   const checkLightState = (checkTime: Date, deltaRed: number, deltaGreen: number) => {
-    console.log('checkLightState');
     const currentTime = new Date();
     const deltaTime = currentTime.getTime() - checkTime.getTime();
     const a = Math.floor((deltaTime) / (deltaRed + deltaGreen));
@@ -56,15 +60,9 @@ const TrafficLightsPage = () => {
       timeLeft: c <= deltaGreen ? deltaGreen - c : deltaGreen + deltaRed - c
     };
   }
-
-  const updateProgress = (time: number) => {
-    if (!light) {
-      return
-    }
-    const currentDelta = currentLightColor === ELightColors.RED ? light.redDelta : light.greenDelta;
-    console.log('currentDelta', currentDelta, 'timeLeft', time)
-    const t = (currentDelta - time) / currentDelta * 100;
-    setProgress(t);
+  const calculateProgress = (light: Light, time: number, currentColor: ELightColors) => {
+    const currentDelta = currentColor === ELightColors.RED ? light.redDelta : light.greenDelta;
+    return (currentDelta - time) / currentDelta * 100;
   }
 
   useEffect(() => {
@@ -78,7 +76,7 @@ const TrafficLightsPage = () => {
     if (!!currentIntervalId) {
       window.clearInterval(currentIntervalId);
     }
-    setCurrentIntervalId(createTrafficLightChecker(new Date(light.times[0]), light.redDelta, light.greenDelta));
+    setCurrentIntervalId(createTrafficLightChecker(light));
   }, [lightId]);
 
   const selectLightHandler = (id: string) => {
@@ -104,8 +102,9 @@ const TrafficLightsPage = () => {
               <Typography>{ light.name }</Typography>
               <Typography>Green delta: { light.greenDelta / 1000 } s</Typography>
               <Typography>Red delta: { light.redDelta / 1000 } s</Typography>
-              <Typography>Time left: { timeLeft / 1000 } s</Typography>
-              <LinearProgress
+              <Typography>Time left: { Math.round(timeLeft / 100) / 10 } s</Typography>
+            { progress }
+              <BorderLinearProgress
                   color={ currentLightColor === ELightColors.RED ? 'error' : 'success' }
                   variant="determinate"
                   value={ progress }/>
@@ -139,4 +138,4 @@ const TrafficLightsPage = () => {
   </>
 }
 
-export default TrafficLightsPage
+export default LightsPage

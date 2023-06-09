@@ -1,9 +1,9 @@
 import React from 'react';
 import './App.css';
-import TrafficMeter from "./pages/TrafficMeter";
+import TrafficMeterPage from "./pages/TrafficMeterPage";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import AboutPage from "./pages/AboutPage";
-import TrafficLightsPage from "./pages/TrafficLightsPage";
+import LightsPage from "./pages/LightsPage";
 import { BottomNavigation, BottomNavigationAction, Box, styled } from "@mui/material";
 import { Home, Info, Traffic } from '@mui/icons-material';
 import MetricsPage from "./pages/MetricsPage";
@@ -45,9 +45,9 @@ function App() {
           p: 2,
         } }>
           <Routes>
-            <Route path="/" element={ <TrafficLightsPage/> }/>
-            <Route path="traffic-meter" element={ <TrafficMeter/> }/>
-            <Route path="traffic-meter/:lightId" element={ <TrafficMeter/> }/>
+            <Route path="/" element={ <LightsPage/> }/>
+            <Route path="traffic-meter" element={ <TrafficMeterPage/> }/>
+            <Route path="traffic-meter/:lightId" element={ <TrafficMeterPage/> }/>
             <Route path="measurements" element={ <MetricsPage/> }/>
             <Route path="about" element={ <AboutPage/> }/>
           </Routes>

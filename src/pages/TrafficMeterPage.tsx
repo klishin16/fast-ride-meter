@@ -26,7 +26,7 @@ const StyledLightMeasurements = styled(LightMeasurements)({
   flexGrow: 1,
 })
 
-export default function TrafficMeter() {
+export default function TrafficMeterPage() {
   const {lightId} = useParams();
   const navigate = useNavigate();
   const {dispatch} = useContext(TrafficLightsContext);
