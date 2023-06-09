@@ -5,7 +5,7 @@ import { v4 as uuid } from "uuid";
 import { ActionTypes, TrafficLightsContext } from "../state/TrafficLightsContext";
 
 const LightCreator = () => {
-  const { reset: resetTitle, ...title } = useInput('');
+  const { reset: resetTitle, put: _, ...title } = useInput('');
   const { dispatch } = useContext(TrafficLightsContext);
 
   const addLightHandler = () => {

@@ -19,20 +19,29 @@ const StyledListItemButton = styled(ListItemButton)({
 interface ILightsProps {
   lights: Light[],
   select: (id: string) => void,
+  showRemoveButton?: boolean,
   remove?: (id: string) => void
 }
 
 
-const LightMeasurements: React.FC<ListProps & ILightsProps> = ({lights, select, remove, ...props}) => {
+const LightMeasurements: React.FC<ListProps & ILightsProps> = ({
+                                                                 lights,
+                                                                 select,
+                                                                 showRemoveButton,
+                                                                 remove,
+                                                                 ...props
+                                                               }) => {
   const listItems = lights.map(light =>
     <>
       <StyledListItem disablePadding key={ light.id }>
         <StyledListItemButton onClick={ () => select(light.id) }>
           { light.name }
         </StyledListItemButton>
-        <IconButton aria-label="delete" color="error" onClick={() => remove && remove(light.id)}>
-          <Delete/>
-        </IconButton>
+        { showRemoveButton ?
+          <IconButton aria-label="delete" color="error" onClick={ () => remove && remove(light.id) }>
+            <Delete/>
+          </IconButton> :
+          null }
       </StyledListItem>
     </>
   )

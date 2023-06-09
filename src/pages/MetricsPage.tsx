@@ -90,6 +90,7 @@ const MetricsPage = () => {
         } }
         lights={ state.trafficLights.allIds.map(id => state.trafficLights.byId[id]) }
         select={ selectLightHandler }
+        showRemoveButton
         remove={ removeLightHandler }
       />
       <LightCreator/>
