@@ -1,12 +1,34 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
+import lightReducer from './reducers/LightSlice'
+import metricReducer from './reducers/MetricSlice'
+import timeReducer from './reducers/TimeSlice'
+import uiReducer from './reducers/UISlice'
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
 const rootReducer = combineReducers({
-
+  lightReducer,
+  metricReducer,
+  timeReducer,
+  uiReducer
 })
+
+const customizedMiddleware = getDefaultMiddleware({
+  serializableCheck: false
+})
+
+const persistConfig = {
+  key: 'root',
+  version: 1,
+  storage
+}
+
+const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 export const setupStore = () => {
   return configureStore({
-    reducer: rootReducer
+    reducer: persistedReducer,
+    middleware: customizedMiddleware
   })
 }
 

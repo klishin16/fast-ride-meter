@@ -1,36 +1,42 @@
 import { Box, Button, TextField } from "@mui/material";
-import React, { useContext, useEffect } from "react";
-import { ActionTypes, TrafficLightsContext } from "../state/TrafficLightsContext";
+import React, { useEffect } from "react";
 import useInput from "../hooks/useInput";
+import { useAppDispatch, useAppSelector } from "../hooks/redux";
+import { lightSlice } from "../store/reducers/LightSlice";
+import { ESnackbarType, uiSlice } from "../store/reducers/UISlice";
+import { timeSlice } from "../store/reducers/TimeSlice";
+import { v4 as uuid } from 'uuid';
 
 interface ILightEditorProps {
   id: string
 }
 
 const LightEditor: React.FC<ILightEditorProps> = ({id}) => {
-  const {state, dispatch} = useContext(TrafficLightsContext);
-  const {put: setTitle, ...title} = useInput('');
-  const {put: setRedDelta, ...redDelta} = useInput(0);
-  const {put: setGreenDelta, ...greenDelta} = useInput(0);
+  const { byId } = useAppSelector(state => state.lightReducer);
+  const { patchLight } = lightSlice.actions;
+  const { showSnackbar } = uiSlice.actions;
+  const dispatch = useAppDispatch();
+  const {put: setTitle, reset: _, ...title} = useInput('');
+  const {put: setRedDelta, reset: __, ...redDelta} = useInput(0);
+  const {put: setGreenDelta, reset: ___, ...greenDelta} = useInput(0);
 
   useEffect(() => {
-    const light = state.trafficLights.byId[id];
+    const light = byId[id];
     setTitle(light.name)
     setRedDelta(light.redDelta / 1000);
     setGreenDelta(light.greenDelta / 1000);
   }, [id])
 
   const updateHandler = () => {
-    dispatch({
-      type: ActionTypes.PATCH_LIGHT,
-      payload: {
+    dispatch(
+      patchLight({
         id,
         name: title.value,
         redDelta: redDelta.value * 1000,
-        greenDelta: greenDelta.value * 1000,
-        times: state.trafficLights.byId[id].times
-      }
-    })
+        greenDelta: greenDelta.value * 1000
+      })
+    )
+    dispatch(showSnackbar({type: ESnackbarType.SUCCESS, message: 'Light updated!'}));
   }
 
   return <>

@@ -1,22 +1,26 @@
 import { Box, Button, TextField } from "@mui/material";
-import React, { useContext } from "react";
+import React from "react";
 import useInput from "../hooks/useInput";
 import { v4 as uuid } from "uuid";
-import { ActionTypes, TrafficLightsContext } from "../state/TrafficLightsContext";
+import { lightSlice } from "../store/reducers/LightSlice";
+import { useAppDispatch } from "../hooks/redux";
+import { ESnackbarType, uiSlice } from "../store/reducers/UISlice";
 
 const LightCreator = () => {
+  const { addLight } = lightSlice.actions;
+  const { showSnackbar } = uiSlice.actions;
+  const dispatch = useAppDispatch();
   const { reset: resetTitle, put: _, ...title } = useInput('');
-  const { dispatch } = useContext(TrafficLightsContext);
 
   const addLightHandler = () => {
     const id = uuid();
-    dispatch({
-      type: ActionTypes.ADD_LIGHT,
-      payload: {
+    dispatch(
+      addLight({
         id,
         name: title.value
-      }
-    })
+      })
+    )
+    dispatch(showSnackbar({type: ESnackbarType.SUCCESS, message: 'Light added!'}));
     resetTitle();
   }
 

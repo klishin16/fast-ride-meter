@@ -2,6 +2,7 @@ import { IconButton, List, ListItem, ListItemButton, ListProps, styled } from "@
 import { Delete } from '@mui/icons-material';
 import React from "react";
 import { ILight } from "../models/ILight";
+import { ITime } from "../models/ITime";
 
 const StyledList = styled(List)({
   width: '100%',
@@ -16,32 +17,32 @@ const StyledListItemButton = styled(ListItemButton)({
   alignItems: 'center'
 })
 
-interface ILightsProps {
-  lights: ILight[],
-  select: (id: string) => void,
+interface ITimesListProps {
+  times: ITime[],
+  select?: (id: string) => void,
   showRemoveButton?: boolean,
   remove?: (id: string) => void
 }
 
 
-const LightMeasurements: React.FC<ListProps & ILightsProps> = ({
-                                                                 lights,
+const TimesList: React.FC<ListProps & ITimesListProps> = ({
+                                                                 times,
                                                                  select,
                                                                  showRemoveButton,
                                                                  remove,
                                                                  ...props
                                                                }) => {
-  const listItems = lights.map(light =>
-      <StyledListItem disablePadding key={ light.id }>
-        <StyledListItemButton onClick={ () => select(light.id) }>
-          { light.name }
-        </StyledListItemButton>
-        { showRemoveButton ?
-          <IconButton aria-label="delete" color="error" onClick={ () => remove && remove(light.id) }>
-            <Delete/>
-          </IconButton> :
-          null }
-      </StyledListItem>
+  const listItems = times.map((time) =>
+    <StyledListItem disablePadding key={ time.id } onClick={ () => select && select(time.id) }>
+      <StyledListItemButton>
+        { time.date.toLocaleString() }
+      </StyledListItemButton>
+      { showRemoveButton ?
+        <IconButton aria-label="delete" color="error" onClick={ () => remove && remove(time.id) }>
+          <Delete/>
+        </IconButton> :
+        null }
+    </StyledListItem>
   )
 
   return (
@@ -51,4 +52,4 @@ const LightMeasurements: React.FC<ListProps & ILightsProps> = ({
   )
 }
 
-export default LightMeasurements
+export default TimesList;

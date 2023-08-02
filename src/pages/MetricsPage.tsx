@@ -1,118 +1,41 @@
-import { Button, Card, styled, Typography } from "@mui/material";
-import React, { useContext, useState } from "react";
-import { ActionTypes, TrafficLightsContext } from "../state/TrafficLightsContext";
+import { Box, Card, styled, Typography } from "@mui/material";
+import React from "react";
 import MetricsList from "../components/MetricsList";
-import LightsList from "../components/LightsList";
-import { useNavigate } from "react-router-dom";
-import { Metric } from "../types";
-import LightCreator from "../components/LightCreator";
-import LightEditor from "../components/LightEditor";
+import { useParams } from "react-router-dom";
+import { useAppSelector } from "../hooks/redux";
+import { IMetric } from "../models/IMetric";
+import MetricsTable from "../components/MetricsTable";
 
-
-const MeasurementsPageLeftCard = styled(Card)({
+const MetricsCard = styled(Card)({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'space-between',
+  justifyContent: 'flex-start',
   gap: 10,
   alignItems: 'center',
   width: '100%',
 })
 
-const MeasurementsPageRightCard = styled(Card)({
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 10,
-  alignItems: 'center',
-  width: '100%'
-})
-
 const MetricsPage = () => {
-  const {state, dispatch} = useContext(TrafficLightsContext);
-  const navigate = useNavigate();
+  const { lightId } = useParams();
+  const metrics = useAppSelector(state => state.metricReducer.allIds.reduce<IMetric[]>((acc, id) => {
+    if (state.metricReducer.byId[id].lightId === lightId) {
+      acc.push(state.metricReducer.byId[id]);
+    }
 
-  const [currentLightId, setCurrentLightId] = useState<string | null>(null);
+    return acc;
+  }, []))
 
+  return <MetricsCard sx={ {
+    boxShadow: 1,
+    p: 1
+  } }>
+    <Typography variant="h5" gutterBottom>
+      Traffic light metrics
+    </Typography>
 
-  const selectLightHandler = (id: string) => {
-    setCurrentLightId(id);
-  }
-
-  const removeLightHandler = (id: string) => {
-    dispatch({
-      type: ActionTypes.REMOVE_LIGHT,
-      payload: {
-        id
-      }
-    })
-  }
-
-  const removeMetricHandler = (id: string) => {
-    dispatch({
-      type: ActionTypes.REMOVE_METRIC,
-      payload: {
-        id
-      }
-    })
-  }
-  const metricsContainer = () => {
-    const metrics = state.metrics.allIds.reduce<Metric[]>((acc, id) => {
-      if (state.metrics.byId[id].lightId === currentLightId) {
-        acc.push(state.metrics.byId[id]);
-      }
-
-      return acc;
-    }, [])
-
-    return currentLightId ? <>
-      <MetricsList
-        sx={ {flexGrow: 1} }
-        metrics={ metrics }
-        remove={ removeMetricHandler }
-      ></MetricsList>
-      <Button sx={ {width: '100%'} } variant="contained" onClick={ () => navigate('/traffic-meter/' + currentLightId) }>New
-        metring</Button>
-    </> : <Typography>Please, select traffic light</Typography>
-  }
-
-  return <>
-    <MeasurementsPageLeftCard sx={ {
-      boxShadow: 1,
-      p: 1
-    } }>
-      <Typography variant="h5" gutterBottom>
-        Traffic lights
-      </Typography>
-      <LightsList
-        sx={ {
-          flexGrow: 1
-        } }
-        lights={ state.trafficLights.allIds.map(id => state.trafficLights.byId[id]) }
-        select={ selectLightHandler }
-        showRemoveButton
-        remove={ removeLightHandler }
-      />
-      <LightCreator/>
-    </MeasurementsPageLeftCard>
-    <MeasurementsPageRightCard sx={ {
-      boxShadow: 1,
-      p: 1,
-      display: 'flex',
-      flexDirection: {xs: 'row', sm: 'column'}
-    } }>
-      {currentLightId && <div>
-          <Typography variant="body1" gutterBottom>Edit</Typography>
-          <LightEditor id={currentLightId} />
-      </div>}
-      <div>
-        <Typography variant="body1" gutterBottom>
-          Metrics
-        </Typography>
-        { metricsContainer() }
-      </div>
-    </MeasurementsPageRightCard>
-  </>
+    <MetricsTable metrics={metrics} hideRemove />
+  </MetricsCard>
 }
 
-export default MetricsPage
+export default MetricsPage;

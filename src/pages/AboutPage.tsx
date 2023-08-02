@@ -1,15 +1,8 @@
 import { Button, Card, Typography } from "@mui/material";
-import { useContext } from "react";
-import { ActionTypes, TrafficLightsContext } from "../state/TrafficLightsContext";
 
 const AboutPage = () => {
-  const {dispatch} = useContext(TrafficLightsContext);
 
   const clearDbHandler = () => {
-    dispatch({
-      type: ActionTypes.CLEAR_DB,
-      payload: {}
-    })
   }
 
   return <Card sx={ {

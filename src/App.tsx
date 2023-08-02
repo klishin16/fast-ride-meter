@@ -5,7 +5,10 @@ import { Route, Routes, useNavigate } from "react-router-dom";
 import AboutPage from "./pages/AboutPage";
 import LightsPage from "./pages/LightsPage";
 import { BottomNavigation, BottomNavigationAction, Box, styled } from "@mui/material";
-import { Home, Info, Traffic } from '@mui/icons-material';
+import { Home, Info, Traffic, Backspace } from '@mui/icons-material';
+import MeasurementsPage from "./pages/MeasurementsPage";
+import SnackbarMessage from "./components/SnackbarMessage";
+import TimesPage from "./pages/TimesPage";
 import MetricsPage from "./pages/MetricsPage";
 
 
@@ -27,6 +30,7 @@ function App() {
       <header className="App-header">
       </header>
       <main className='main_container'>
+        <SnackbarMessage />
         <AppPagesContainer sx={ {
           width: {
             xs: 1,
@@ -48,7 +52,9 @@ function App() {
             <Route path="/" element={ <LightsPage/> }/>
             <Route path="traffic-meter" element={ <TrafficMeterPage/> }/>
             <Route path="traffic-meter/:lightId" element={ <TrafficMeterPage/> }/>
-            <Route path="measurements" element={ <MetricsPage/> }/>
+            <Route path="measurements" element={ <MeasurementsPage/> }/>
+            <Route path="times/:lightId" element={ <TimesPage/> }/>
+            <Route path="metrics/:lightId" element={ <MetricsPage /> }/>
             <Route path="about" element={ <AboutPage/> }/>
           </Routes>
         </AppPagesContainer>
@@ -78,6 +84,7 @@ function App() {
           <BottomNavigationAction label="Traffic meter" icon={ <Traffic/> }
                                   onClick={ () => navigate('traffic-meter') }/>
           <BottomNavigationAction label="About" icon={ <Info/> } onClick={ () => navigate('about') }/>
+          <BottomNavigationAction label="Back" icon={ <Backspace/> } onClick={ () => navigate(-1) }/>
         </BottomNavigation>
       </main>
     </div>

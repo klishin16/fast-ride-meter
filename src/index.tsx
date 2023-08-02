@@ -4,16 +4,26 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router } from "react-router-dom";
-import { TrafficLightsProvider } from "./state/TrafficLightsContext";
+import { Provider } from "react-redux";
+import { setupStore } from "./store/store";
+import { persistStore } from "redux-persist";
+import { PersistGate } from "redux-persist/integration/react";
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+const store = setupStore();
+
+const persistor = persistStore(store)
+
 root.render(
     <Router>
-      <TrafficLightsProvider>
-        <App />
-      </TrafficLightsProvider>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <App />
+          </PersistGate>
+        </Provider>
     </Router>
 );
 

@@ -1,9 +1,11 @@
 import { Box, Card, LinearProgress, styled, Typography } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
-import { ELightColors, Light } from "../types";
-import { TrafficLightsContext } from "../state/TrafficLightsContext";
+import React, { useEffect, useState } from "react";
 import LightsList from "../components/LightsList";
 import TrafficLightViewer from "../components/TrafficLightViewer";
+import { ELightColors, ILight } from "../models/ILight";
+import { useAppDispatch, useAppSelector } from "../hooks/redux";
+import { ESnackbarType, uiSlice } from "../store/reducers/UISlice";
+import { ITime } from "../models/ITime";
 
 
 const TrafficLightsLeftCard = styled(Card)({
@@ -29,19 +31,27 @@ const BorderLinearProgress = styled(LinearProgress)(({theme}) => ({
 }));
 
 const LightsPage = () => {
-  const {state} = useContext(TrafficLightsContext);
+  const { byId: lightsById, allIds: lightsAllIds } = useAppSelector(state => state.lightReducer);
+  const { byId: timesById, byLightId: timesByLightId } = useAppSelector(state => state.timeReducer);
+  const dispatch = useAppDispatch();
+  const { showSnackbar } = uiSlice.actions;
 
   const [lightId, setLightId] = useState<string | null>(null);
-  const [light, setLight] = useState<Light | null>(null);
+  const [light, setLight] = useState<ILight | null>(null);
   const [currentLightColor, setCurrentLightColor] = useState<ELightColors>(ELightColors.RED); // Текущий цвет
   const [currentIntervalId, setCurrentIntervalId] = useState<number>(0);
+  const [baseGreenTime, setBaseGreenTime] = useState<Date>();
 
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [progress, setProgress] = useState<number>(0);
 
-  const createTrafficLightChecker = (light: Light) => {
+  const createTrafficLightChecker = (light: ILight) => {
     return window.setInterval(() => {
-      const {color, timeLeft} = checkLightState(new Date(light.times[0]), light.redDelta, light.greenDelta);
+      const lightTimes = timesByLightId[light.id].map(timeId => timesById[timeId]);
+      const greenTime = new Date(chooseNearestTime(lightTimes, new Date()).date);
+      console.log('greenTime', greenTime);
+      setBaseGreenTime(greenTime);
+      const {color, timeLeft} = checkLightState(greenTime, light.redDelta, light.greenDelta);
       setCurrentLightColor(color);
       setTimeLeft(timeLeft);
       setProgress(calculateProgress(light!, timeLeft, color) ?? 0);
@@ -60,17 +70,38 @@ const LightsPage = () => {
       timeLeft: c <= deltaGreen ? deltaGreen - c : deltaGreen + deltaRed - c
     };
   }
-  const calculateProgress = (light: Light, time: number, currentColor: ELightColors) => {
+  const calculateProgress = (light: ILight, time: number, currentColor: ELightColors) => {
     const currentDelta = currentColor === ELightColors.RED ? light.redDelta : light.greenDelta;
     return (currentDelta - time) / currentDelta * 100;
   }
+
+  const chooseNearestTime = (times: ITime[], now_time: Date) => {
+    const nowDaySeconds = getDaySeconds(now_time);
+    return times.reduce((best_time, current_time) => {
+      if (Math.abs(getDaySeconds(new Date(current_time.date)) - nowDaySeconds) < Math.abs(getDaySeconds(new Date(best_time.date)) - nowDaySeconds)) {
+        return current_time
+      }
+
+      return best_time
+    }, times[0])
+  }
+
+  const getDaySeconds = (date: Date) => {
+    return date.getHours() * 60 * 60 + date.getMinutes() * 60 + date.getSeconds()
+  }
+
+  /** END PURE FUNCTIONS ZONE */
 
   useEffect(() => {
     if (!lightId) {
       return;
     }
 
-    const light = state.trafficLights.byId[lightId];
+    const light = lightsById[lightId];
+    if (!timesByLightId[lightId]?.length) {
+      dispatch(showSnackbar({type: ESnackbarType.ERROR, message: 'No green times!'}));
+      return;
+    }
     setLight(light);
 
     if (!!currentIntervalId) {
@@ -103,6 +134,7 @@ const LightsPage = () => {
               <Typography>Green delta: { light.greenDelta / 1000 } s</Typography>
               <Typography>Red delta: { light.redDelta / 1000 } s</Typography>
               <Typography>Time left: { Math.round(timeLeft / 100) / 10 } s</Typography>
+              <Typography>Base green time: { baseGreenTime?.toLocaleTimeString() }</Typography>
               <BorderLinearProgress
                   color={ currentLightColor === ELightColors.RED ? 'error' : 'success' }
                   variant="determinate"
@@ -130,7 +162,7 @@ const LightsPage = () => {
       <Typography variant="h5" gutterBottom>
         Traffic lights
       </Typography>
-      <LightsList lights={ state.trafficLights.allIds.map(id => state.trafficLights.byId[id]) }
+      <LightsList lights={ lightsAllIds.map(id => lightsById[id]) }
                   select={ selectLightHandler }>
       </LightsList>
     </TrafficLightsRightCard>

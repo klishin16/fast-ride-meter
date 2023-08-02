@@ -10,8 +10,8 @@ import {
   Typography
 } from "@mui/material";
 import React from "react";
-import { Metric } from "../types";
 import { Delete } from "@mui/icons-material";
+import { IMetric } from "../models/IMetric";
 
 const StyledList = styled(List)({
   width: '100%'
@@ -26,24 +26,23 @@ const StyledListItemButton = styled(ListItemButton)({
 })
 
 interface ILightMetricsProps {
-  metrics: Metric[],
-  remove?: (id: string) => void
+  metrics: IMetric[],
+  remove?: (id: string) => void,
+  hideRemove?: boolean,
 }
 
-const MetricsList: React.FC<ListProps & ILightMetricsProps> = ({metrics, remove, ...props}) => {
+const MetricsList: React.FC<ListProps & ILightMetricsProps> = ({metrics, remove, hideRemove,...props}) => {
   const listItems = metrics.map(metric =>
-    <>
-      <StyledListItem disablePadding key={ metric.id }>
-        <StyledListItemButton>
-          <ListItemText primary={ metric.redDelta }/>
-          <ListItemText primary={ metric.greenDelta }/>
-          <ListItemText primary={ new Date(metric.time).toLocaleTimeString() }/>
-        </StyledListItemButton>
-        <IconButton aria-label="delete" color="error" onClick={ () => remove && remove(metric.id) }>
+    <StyledListItem disablePadding key={ metric.id }>
+      <StyledListItemButton>
+        <ListItemText primary={ metric.redDelta }/>
+        <ListItemText primary={ metric.greenDelta }/>
+        <ListItemText primary={ new Date(metric.time).toLocaleTimeString() }/>
+      </StyledListItemButton>
+      { !hideRemove && <IconButton aria-label="delete" color="error" onClick={ () => remove && remove(metric.id) }>
           <Delete/>
-        </IconButton>
-      </StyledListItem>
-    </>
+      </IconButton> }
+    </StyledListItem>
   )
 
   return (

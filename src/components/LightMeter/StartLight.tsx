@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, styled, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
-import { ELightColors } from "../../types";
+import { ELightColors } from "../../models/ILight";
 
 const StartLightContainer = styled(Box)({
   minWidth: 140

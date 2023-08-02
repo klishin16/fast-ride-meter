@@ -1,6 +1,6 @@
 import { Box, styled } from "@mui/material";
-import { ELightColors } from "../types";
 import React from "react";
+import { ELightColors } from "../models/ILight";
 
 const TrafficLightBox = styled(Box)({
   display: 'flex',

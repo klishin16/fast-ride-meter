@@ -1,6 +1,7 @@
 import { Box, Divider, List, ListItem, ListItemButton, ListItemText, ListProps, styled } from "@mui/material";
 import React from "react";
-import { ELightColors, Measurement } from "../../types";
+import { ELightColors } from "../../models/ILight";
+import { ISnapshot } from "../../models/ISnapshot";
 
 const StyledList = styled(List)({
   width: '100%',
@@ -16,7 +17,7 @@ const StyledListItemButton = styled(ListItemButton)({
 })
 
 interface LightMeasurementsProps {
-  measurements: Measurement[]
+  measurements: ISnapshot[]
 }
 
 const getLightColor = (color: ELightColors) => {
@@ -32,8 +33,8 @@ const getLightColor = (color: ELightColors) => {
 
 const LightMeasurements: React.FC<ListProps & LightMeasurementsProps> = ({ measurements, ...props }) => {
   const listItems = measurements.map(measurement =>
-    <>
-      <StyledListItem disablePadding key={measurement.id}>
+    <div key={measurement.id}>
+      <StyledListItem disablePadding>
         <StyledListItemButton>
           <Box sx={{
             borderRadius: '50%',
@@ -46,7 +47,7 @@ const LightMeasurements: React.FC<ListProps & LightMeasurementsProps> = ({ measu
         </StyledListItemButton>
       </StyledListItem>
       <Divider component="li" />
-    </>
+    </div>
   )
 
   return (

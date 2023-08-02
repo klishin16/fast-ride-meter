@@ -1,5 +1,6 @@
+//deprecated
+
 import React, { createContext, useReducer } from "react";
-import { Light, Metric } from "../types";
 import { produce } from "immer";
 
 interface ITrafficLightsState {
